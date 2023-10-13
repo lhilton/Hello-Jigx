@@ -1,0 +1,6 @@
+type: datasource.static
+options:
+  data:
+    - id: 1
+      lat: $formatNumber(@ctx.system.geolocation.coords.latitude, '####.0000')
+      lng: $formatNumber(@ctx.system.geolocation.coords.longitude, '####.0000')

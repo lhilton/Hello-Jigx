@@ -11,7 +11,8 @@ header:
       type: component.image
       options:
         source:
-          uri: https://builder.jigx.com/assets/images/header.jpg
+          uri: https://leezilla.net/journal/media/posts/37/responsive/1951928-lg.jpg
+
 
 onFocus: 
   type: action.action-list
@@ -25,19 +26,10 @@ onFocus:
               function: rest-get-weather
               functionParameters:
                 temperature_unit: =@ctx.jig.components.weather_unit.state.value
-                
-onRefresh: 
-  type: action.action-list
-  options:
-    actions:
-      - type: action.sync-entities
-        options: 
-          provider: DATA_PROVIDER_REST
-          entities:
-            - entity: weather
-              function: rest-get-weather
-              functionParameters:
-                temperature_unit: =@ctx.jig.components.weather_unit.state.value
+                latitude: =@ctx.system.geolocation.coords.latitude
+                longitude: =@ctx.system.geolocation.coords.longitude
+                daily: "temperature_2m_max,temperature_2m_min"
+                timezone: "America/Los_Angeles"
 
 datasources:
   weatherData:
@@ -63,55 +55,31 @@ children:
   - type: component.form
     options:
       children:
-      - type: component.section
-        options:
-          title: Cleaning Services
-          children:
-            - type: component.field-row
+        - type: component.dropdown
+          instanceId: weather_unit
+          options:
+            data: =@ctx.datasources.static-temperature-units
+            label: "Select Unit"
+            initialValue: "fahrenheit"
+            onChange: 
+              type: action.sync-entities
+              options: 
+                provider: DATA_PROVIDER_REST
+                entities:
+                  - entity: weather
+                    function: rest-get-weather
+                    functionParameters:
+                      temperature_unit: =@ctx.jig.components.weather_unit.state.value
+                      latitude: =@ctx.system.geolocation.coords.latitude
+                      longitude: =@ctx.system.geolocation.coords.longitude
+                      daily: "temperature_2m_max,temperature_2m_min"
+                      timezone: "America/Los_Angeles"
+            item:
+              type: component.dropdown-item
+              instanceId: =@ctx.current.item.name
               options:
-                children:
-                  - type: component.dropdown
-                    instanceId: weather_timezone
-                    options:
-                      data: =@ctx.datasources.static-timezones
-                      label: "Select Timezone"
-                      initialValue: "America/Los_Angeles"
-                      onChange:
-                        type: action.sync-entities
-                        options: 
-                          provider: DATA_PROVIDER_REST
-                          entities:
-                            - entity: weather
-                              function: rest-get-weather
-                              functionParameters:
-                                temperature_unit: =@ctx.jig.components.weather_unit.state.value
-                      item:
-                        type: component.dropdown-item
-                        instanceId: =@ctx.current.item.name
-                        options:
-                          title: =@ctx.current.item.name
-                          value: =@ctx.current.item.name
-                  - type: component.dropdown
-                    instanceId: weather_unit
-                    options:
-                      data: =@ctx.datasources.static-temperature-units
-                      label: "Select Unit"
-                      initialValue: "fahrenheit"
-                      onChange:
-                        type: action.sync-entities
-                        options: 
-                          provider: DATA_PROVIDER_REST
-                          entities:
-                            - entity: weather
-                              function: rest-get-weather
-                              functionParameters:
-                                temperature_unit: =@ctx.jig.components.weather_unit.state.value
-                      item:
-                        type: component.dropdown-item
-                        instanceId: =@ctx.current.item.name
-                        options:
-                          title: =@ctx.current.item.name
-                          value: =@ctx.current.item.name
+                title: =@ctx.current.item.name
+                value: =@ctx.current.item.name
                           
 
   - type: component.entity
