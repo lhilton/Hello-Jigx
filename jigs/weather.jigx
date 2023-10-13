@@ -1,0 +1,73 @@
+title: Weather
+description: Weather Forecast for your area
+type: jig.default
+icon: weather
+
+header:
+  type: component.jig-header
+  options:
+    height: medium
+    children:
+      type: component.image
+      options:
+        source:
+          uri: https://builder.jigx.com/assets/images/header.jpg
+
+onFocus: 
+  type: action.action-list
+  options:
+    actions:
+      - type: action.sync-entities
+        options: 
+          provider: DATA_PROVIDER_REST
+          entities:
+            - entity: weather
+              function: rest-get-weather
+
+datasources:
+  weatherData:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+      isDocument: true
+      entities:
+        - entity: weather
+      query: |
+        SELECT id
+          , '$.timezone'
+          , '$.units'
+          , '$.today_max'
+          , '$.today_min'
+          , '$.dates'
+          , '$.temperatures_max'
+          , '$.temperatures_min'
+          FROM [weather]
+      
+
+children:
+  - type: component.entity
+    options:
+      children:
+        - type: component.entity-field
+          options:
+            label: Timezone
+            value: =@ctx.datasources.weatherData.timezone
+        - type: component.entity-field
+          options:
+            label: "Test of static information"
+            value: This is a test
+        
+widgets:
+  4x2:
+    type: widget.chart
+    options:
+      chart:
+        type: component.line-chart
+        options:
+          chart:
+            height: 150
+            isAnimated: true
+          series:
+            - data: =@ctx.datasources.weatherData.temperatures_max
+              name: Forecast
+              layout: area-gradient

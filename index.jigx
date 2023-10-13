@@ -1,0 +1,8 @@
+name: hello-jigx
+title: Hello-Jigx
+category: business
+widgets:
+  - size: 2x2 # choose size of the widget on the home hub
+    jigId: map
+  - size: 4x2 # choose size of the widget on the home hub
+    jigId: weather
