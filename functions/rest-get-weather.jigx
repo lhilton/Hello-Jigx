@@ -6,24 +6,29 @@ parameters:
   latitude:
     type: string
     location: query
-    required: true
+    required: false
     value: "47.1698"
   longitude:
     type: string
     location: query
-    required: true
-    value: "47.1698"
+    required: false
+    value: "-122.602"
   daily:
     type: string
     location: query
-    required: true
+    required: false
     value: "temperature_2m_max,temperature_2m_min"
   timezone:
     type: string
     location: query
-    required: true
+    required: false
     value: "America/Los_Angeles"
-  
+  temperature_unit:
+      type: string
+      location: query
+      required: false
+      value: "fahrenheit"
+
 outputTransform: |
   {
     "timezone": $.timezone_abbreviation,
@@ -31,6 +36,6 @@ outputTransform: |
     "today_max": $.daily.temperature_2m_max[0],
     "today_min": $.daily.temperature_2m_min[0],
     "dates": $.daily.time,
-    "temperatures_min": $zip($.daily.time, $.daily.temperature_2m_min),
-    "temperatures_max": $map($.daily.temperature_2m_max, function($v, $k) { { "x": $k + 1, "y": $v } } )
+    "temperatures_min": $map($.daily.temperature_2m_min, function($v, $k) { { "x": $k, "y": $v } } ),
+    "temperatures_max": $map($.daily.temperature_2m_max, function($v, $k) { { "x": $k, "y": $v } } )
   }

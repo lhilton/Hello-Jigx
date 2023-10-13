@@ -1,0 +1,7 @@
+type: datasource.static
+options:
+  data:
+    - id: 1
+      name: "fahrenheit"
+    - id: 2
+      name: "celsius"
